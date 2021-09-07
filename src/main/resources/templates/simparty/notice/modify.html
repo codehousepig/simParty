@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
+	<th:block th:fragment="content">
+		<h1 class="mt-4">Modify Page</h1>
+
+		<form action="/simparty/notice/modify" method="post">
+
+		<input type="hidden" name="page" th:value="${requestDTO.page}">
+
+		<div class="form-group">
+			<label >Cno</label>
+			<input type="text" class="form-control" name="nno" th:value="${dto.nno}" readonly>
+		</div>
+		<div class="form-group">
+			<label >Title</label>
+			<input type="text" class="form-control" name="title" th:value="${dto.title}">
+		</div>
+		<div class="form-group">
+			<label >Content</label>
+			<textarea class="form-control" rows="5" name="content">[[ ${dto.content} ]]</textarea>
+		</div>
+		<div class="form-group">
+			<label >Writer</label>
+			<input type="text" class="form-control" name="writer" th:value="${dto.writer}" readonly>
+		</div>
+		<div>
+			<label >RegDate</label>
+			<input type="text" class="form-control" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+		</div>
+		<div>
+			<label >ModDate</label>
+			<input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+		</div>
+		</form>
+
+		<button type="button" class="btn btn-primary btn_modify">확인</button>
+		<button type="button" class="btn btn-info btn_cancel">취소</button>
+
+		<script th:inline="javascript">
+			var actionForm = $("form"); // form 태그 객체
+
+			$(".btn_modify").click(
+					function () {
+						if(!confirm("수정하시겠습니까?")){
+							return;
+						}
+						actionForm
+								.attr("action", "/simparty/notice/modify")
+								.attr("method", "post")
+								.submit();
+					}
+			);
+			$(".btn_cancel").click(
+					function () {
+						if(!confirm("취소하시겠습니까?")){
+							return;
+						}
+						actionForm
+								.attr("action", "/simparty/notice/read")
+								.attr("method", "get")
+								.submit();
+					}
+			);
+		</script>
+
+	</th:block>
+</th:block>
+</body>
+</html>

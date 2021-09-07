@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<h1 class="mt-4">Read Page</h1>
+		<form action="" method="">
+
+			<div class="form-group">
+				<label >CNO</label>
+				<input type="text" class="form-control" name="cno" th:value="${dto.cno}" readonly>
+			</div>
+			<div class="form-group">
+				<label >Title</label>
+				<input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
+			</div>
+			<div>
+				<label >RegDate</label>
+				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+			</div>
+			<div>
+				<label >ModDate</label>
+				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+			</div>
+
+			<style>
+				.uploadResult {
+					width: 100%;
+					background-color: gray;
+					margin-top: 10px;
+				}
+				.uploadResult ul {
+					display: flex;
+					flex-flow: row;
+					justify-content: center;
+					align-items: center;
+					vertical-align: top;
+					overflow: auto;
+				}
+				.uploadResult ul li {
+					list-style: none;
+					padding: 10px;
+					margin-left: 2em;
+				}
+				.uploadResult ul li img {
+					width: 100px;
+				}
+			</style>
+
+			<div class="">
+				<ul>
+					<li th:each="img: ${dto.imageDTOList}">
+						<div th:if="${img == null}">(첨부 파일이 없습니다)</div>
+						<div th:unless="${img == null}">
+							<img th:if="${img.folderPath != null}" th:src="|/display?fileName=${img.getImageURL()}|"
+								 th:data-file="${img.getImageURL()}">
+						</div>
+					</li>
+				</ul>
+			</div>
+		</form>
+
+		<a th:href="@{/simparty/categories/modify(cno = ${dto.cno}, page = ${requestDTO.page})}">
+			<button type="button" class="btn btn-primary">수정</button>
+		</a>
+
+		<button type="button" class="btn btn-danger removeBtn">삭제</button>
+
+		<a th:href="@{/simparty/categories/everything(page = ${requestDTO.page})}">
+			<button type="button" class="btn btn-info">목록</button>
+		</a>
+
+		<script th:inline="javascript">
+			var actionForm = $("form"); // 태그 객체
+
+			$(".removeBtn").click(function () {
+				actionForm
+						.attr("action", "/simparty/categories/remove")
+						.attr("method", "post");
+				console.log(actionForm);
+				actionForm.submit();
+			});
+		</script>
+	</th:block>
+</th:block>
+</body>
+</html>

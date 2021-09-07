@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
+	<th:block th:fragment="content">
+
+		<div class="container-fluid">
+			<h1 class="mt-4">파티룸 이미지 사진</h1>
+		</div>
+		<div>
+			<img src="/img/party.jpg" alt="파티룸">
+		</div>
+	</th:block>
+</th:block>
+</html>

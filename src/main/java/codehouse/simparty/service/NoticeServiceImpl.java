@@ -1,39 +1,73 @@
 package codehouse.simparty.service;
 
 import codehouse.simparty.dto.NoticeDTO;
+import codehouse.simparty.dto.PageRequestDTO;
+import codehouse.simparty.dto.PageResultDTO;
 import codehouse.simparty.entity.Notice;
+import codehouse.simparty.repository.NoticeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.aspectj.weaver.ast.Not;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-public interface NoticeServiceImpl {
+import java.util.Optional;
+import java.util.function.Function;
 
-    Long register(NoticeDTO noticeDTO); // C
+@Service
+@Log4j2
+@RequiredArgsConstructor
+public class NoticeServiceImpl implements NoticeService {
 
-    NoticeDTO get(Long nno); // R
+    private final NoticeRepository noticeRepository;
 
-    void modify(NoticeDTO noticeDTO); // U
+    @Override
+    public Long register(NoticeDTO noticeDTO) {
+        Notice notice = dtoToEntity(noticeDTO);
 
-    void remove(Long nno); // D
+        log.info("==============================");
+        System.out.println("NoticeEntity = " + notice);
 
-    default Notice dtoToEntity(NoticeDTO noticeDTO) {
-        Notice notice = Notice.builder()
-                .nno(noticeDTO.getNno())
-                .title(noticeDTO.getTitle())
-                .content(noticeDTO.getContent())
-                .writer(noticeDTO.getWriter())
-                .build();
-
-        return notice;
+        noticeRepository.save(notice);
+        return notice.getNno();
     }
 
-    default NoticeDTO entityToDTO(Notice notice) {
-        NoticeDTO noticeDTO = NoticeDTO.builder()
-                .nno(notice.getNno())
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .writer(notice.getWriter())
-                .regDate(notice.getRegDate())
-                .modDate(notice.getModDate())
-                .build();
+    @Override
+    public NoticeDTO read(Long nno) {
+        Optional<Notice> result = noticeRepository.findById(nno);
 
-        return noticeDTO;
+        if (result.isPresent()) {
+            return entityToDTO(result.get());
+        }
+        return null;
+    }
+
+    @Override
+    public void modify(NoticeDTO noticeDTO) {
+        Long nno = noticeDTO.getNno();
+        Optional<Notice> result = noticeRepository.findById(nno);
+
+        if (result.isPresent()) {
+            Notice modi = result.get();
+            modi.changeTitle(noticeDTO.getTitle());
+            modi.changeContents(noticeDTO.getContent());
+            noticeRepository.save(modi);
+        }
+    }
+
+    @Override
+    public void remove(Long nno) {
+        noticeRepository.deleteById(nno);
+    }
+
+    @Override
+    public PageResultDTO<NoticeDTO, Notice> getList(PageRequestDTO requestDTO) {
+        Pageable pageable = requestDTO.getPageable(Sort.by("nno").descending());
+        Page<Notice> result = noticeRepository.findAll(pageable);
+        Function<Notice, NoticeDTO> fn = (en -> entityToDTO(en));
+
+        return new PageResultDTO<>(result, fn);
     }
 }
