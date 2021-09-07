@@ -3,6 +3,7 @@ package codehouse.simparty.service;
 import codehouse.simparty.dto.ClothesDTO;
 import codehouse.simparty.dto.PageRequestDTO;
 import codehouse.simparty.dto.PageResultDTO;
+import codehouse.simparty.entity.Booking;
 import codehouse.simparty.entity.Clothes;
 import codehouse.simparty.entity.Image;
 import codehouse.simparty.entity.QClothes;
@@ -50,16 +51,26 @@ public class ClothesServiceImpl implements ClothesService {
 
     @Override
     public ClothesDTO read(Long cno) {
-        List<Object[]> result = clothesrepository.getClothesWithAll(cno);
-        Clothes clothes = (Clothes) result.get(0)[0];
+        log.info("=====ClothesServiceImpl=====READ=====");
+
+        List<Object[]> resultI = clothesrepository.getClothesWithImage(cno);
+        List<Object[]> resultB = clothesrepository.getClothesWithBooking(cno);
+        Clothes clothes = (Clothes) resultI.get(0)[0];
 
         List<Image> imageList = new ArrayList<>();
-        result.forEach(arr -> {
+        resultI.forEach(arr -> {
             Image image = (Image) arr[1];
             imageList.add(image);
         });
 
-        return entityToDTO(clothes, imageList);
+        List<Booking> bookingList = new ArrayList<>();
+        resultB.forEach(arr -> {
+            Booking booking = (Booking) arr[1];
+            System.out.println(booking);
+            bookingList.add(booking);
+        });
+
+        return entityToDTO(clothes, imageList, bookingList);
     }
 
     @Transactional
@@ -68,7 +79,7 @@ public class ClothesServiceImpl implements ClothesService {
         log.info("=====ClothesServiceImpl=====MODIFY=====");
 
         Long cno = clothesDTO.getCno();
-        List<Object[]> result = clothesrepository.getClothesWithAll(cno);
+        List<Object[]> result = clothesrepository.getClothesWithImage(cno);
         result.forEach(arr -> {
             imagerepository.deleteById( ((Image)arr[1]).getInum() );
         });
@@ -85,7 +96,7 @@ public class ClothesServiceImpl implements ClothesService {
 
     @Override
     public void remove(Long cno) {
-        List<Object[]> result = clothesrepository.getClothesWithAll(cno);
+        List<Object[]> result = clothesrepository.getClothesWithImage(cno);
 
         result.forEach(arr -> {
             imagerepository.deleteById( ((Image)arr[1]).getInum() );
@@ -105,7 +116,8 @@ public class ClothesServiceImpl implements ClothesService {
 
         Function<Object[], ClothesDTO> fn = (en -> entityToDTO(
                 (Clothes) en[0],
-                (List<Image>) (Arrays.asList((Image)en[1])))
+                (List<Image>) (Arrays.asList((Image)en[1])),
+                (List<Booking>) (Arrays.asList((Booking) en[2])))
         );
 
         Page<Object[]> result = clothesrepository.searchPage(

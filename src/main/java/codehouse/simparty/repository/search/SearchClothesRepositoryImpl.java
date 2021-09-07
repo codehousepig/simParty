@@ -1,6 +1,7 @@
 package codehouse.simparty.repository.search;
 
 import codehouse.simparty.entity.Clothes;
+import codehouse.simparty.entity.QBooking;
 import codehouse.simparty.entity.QClothes;
 import codehouse.simparty.entity.QImage;
 import com.querydsl.core.BooleanBuilder;
@@ -33,11 +34,13 @@ public class SearchClothesRepositoryImpl extends QuerydslRepositorySupport imple
 
         QClothes clothes = QClothes.clothes;
         QImage image = QImage.image;
+        QBooking booking = QBooking.booking;
 
         JPQLQuery<Clothes> jpqlQuery = from(clothes);
         jpqlQuery.leftJoin(image).on(image.clothes.eq(clothes));
+        jpqlQuery.leftJoin(booking).on(booking.clothes.eq(clothes));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(clothes, image);
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(clothes, image, booking);
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanExpression expression = clothes.cno.gt(0L);

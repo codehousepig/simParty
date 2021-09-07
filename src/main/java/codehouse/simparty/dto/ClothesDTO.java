@@ -24,5 +24,8 @@ public class ClothesDTO {
     @Builder.Default
     private List<ImageDTO> imageDTOList = new ArrayList<>();
 
+    @Builder.Default
+    private List<BookingDTO> bookingDTOList = new ArrayList<>();
+
     private LocalDateTime regDate, modDate;
 }

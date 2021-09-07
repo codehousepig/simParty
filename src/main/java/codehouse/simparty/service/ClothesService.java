@@ -1,6 +1,7 @@
 package codehouse.simparty.service;
 
 import codehouse.simparty.dto.*;
+import codehouse.simparty.entity.Booking;
 import codehouse.simparty.entity.Clothes;
 import codehouse.simparty.entity.Image;
 
@@ -32,9 +33,7 @@ public interface ClothesService {
         entityMap.put("clothes", clothes);
 
         System.out.println(clothesDTO.getImageDTOList());
-
         List<ImageDTO> imageDTOList = clothesDTO.getImageDTOList();
-
         // ImageDTO 처리
         if (imageDTOList != null && imageDTOList.size() > 0) {
             List<Image> imageList = imageDTOList.stream().map(imageDTO -> {
@@ -52,10 +51,26 @@ public interface ClothesService {
             return null;
         }
 
+        System.out.println(clothesDTO.getBookingDTOList());
+        List<BookingDTO> bookingDTOList = clothesDTO.getBookingDTOList();
+        // bookingDTO 처리
+        if (bookingDTOList != null && bookingDTOList.size() > 0) {
+            List<Booking> bookingList = bookingDTOList.stream().map(bookingDTO -> {
+                Booking booking = Booking.builder()
+                        .startDate(bookingDTO.getStartDate())
+                        .endDate(bookingDTO.getEndDate())
+                        .build();
+                return booking;
+            }).collect(Collectors.toList());
+            entityMap.put("bookingList", bookingList);
+        } else {
+            return null;
+        }
+
         return entityMap;
     }
 
-    default ClothesDTO entityToDTO(Clothes clothes, List<Image> imageList) {
+    default ClothesDTO entityToDTO(Clothes clothes, List<Image> imageList, List<Booking> bookingList) {
         ClothesDTO clothesDTO = ClothesDTO.builder()
                 .cno(clothes.getCno())
                 .title(clothes.getTitle())
@@ -76,6 +91,18 @@ public interface ClothesService {
             }
         }).collect(Collectors.toList());
         clothesDTO.setImageDTOList(imageDTOList);
+
+        List<BookingDTO> bookingDTOList = bookingList.stream().map(booking -> {
+            if (booking == null) {
+                return null;
+            } else {
+                return BookingDTO.builder()
+                        .startDate(booking.getStartDate())
+                        .endDate(booking.getEndDate())
+                        .build();
+            }
+        }).collect(Collectors.toList());
+        clothesDTO.setBookingDTOList(bookingDTOList);
 
         return clothesDTO;
     }

@@ -23,7 +23,11 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long>, Queryds
             "left outer join Image i on i.clothes = c " +
             "where c.cno = :cno " +
             "group by i")
-    List<Object[]> getClothesWithAll(Long cno);
+    List<Object[]> getClothesWithImage(Long cno);
 
-
+    @Query("select c, b " +
+            "from Clothes c " +
+            "left outer join Booking b on b.clothes = c " +
+            "where c.cno = :cno ")
+    List<Object[]> getClothesWithBooking(Long cno);
 }

@@ -23,6 +23,13 @@
 				<label >ModDate</label>
 				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
 			</div>
+			<div>
+				<li th:each="booking: ${dto.bookingDTOList}">
+					<label >예약시간</label>
+					<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy/MM/dd HH:mm')}" readonly>
+					<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy/MM/dd HH:mm')}" readonly>
+				</li>
+			</div>
 
 			<style>
 				.uploadResult {
