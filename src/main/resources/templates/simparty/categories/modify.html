@@ -29,6 +29,20 @@
 				<input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
 			</div>
 
+			<a class="btn_plus" href="#">추가</a>
+			<div class="uploadBooking">
+				<ul class="booking_delete">
+					<li th:each="booking: ${dto.bookingDTOList}"
+						th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
+						th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}">
+						<label th:if="${not #strings.isEmpty(booking)}">예약시간</label>
+						<a class='btn_delete' href='#'>삭제</a>
+						<input type="text" class="form-control booking_start" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}">
+						<input type="text" class="form-control booking_end" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}">
+					</li>
+				</ul>
+			</div>
+
 			<style>
 				.uploadResult {
 					width: 100%;
@@ -63,6 +77,7 @@
 						<img th:if="${img.folderPath != null}" th:src="|/display?fileName=${img.getThumbnailURL()}|"
 							 th:data-file="${img.getThumbnailURL()}">
 					</li>
+
 				</ul>
 			</div>
 			<!-- 파일 업로드 처리하기 -->
@@ -77,7 +92,7 @@
 		</form>
 
 		<!--   버튼   -->
-		<button type="submit" class="btn btn-primary">수정</button>
+		<button type="submit" class="btn btn-primary">확인</button>
 		<a th:href="@{/simparty/categories/everything(page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-info">목록</button>
 		</a>
@@ -197,20 +212,52 @@
 				$(".btn-primary").on("click", function(e) {
 					e.preventDefault();
 
-					var str = "";
+					var img = "";
+					var book= "";
 
 					$(".uploadResult li").each(function(i,obj){
 						var target = $(obj);
 
-						str += "<input type='hidden' name='imageDTOList["+i+"].fileName' value='"+target.data('name') +"'>";
-						str += "<input type='hidden' name='imageDTOList["+i+"].folderPath' value='"+target.data('path')+"'>";
-						str += "<input type='hidden' name='imageDTOList["+i+"].uuid' value='"+target.data('uuid')+"'>";
+						img += "<input type='hidden' name='imageDTOList["+i+"].fileName' value='"+target.data('name') +"'>";
+						img += "<input type='hidden' name='imageDTOList["+i+"].folderPath' value='"+target.data('path')+"'>";
+						img += "<input type='hidden' name='imageDTOList["+i+"].uuid' value='"+target.data('uuid')+"'>";
+					});
+					$(".uploadBooking li").each(function(i, obj){
+						var target = $(obj);
+
+						book += "<input type='hidden' name='bookingDTOList["+i+"].startDate' value ='"+target.data('start')+"'>";
+						book += "<input type='hidden' name='bookingDTOList["+i+"].endDate' value='"+target.data('end')+"'>";
+						img += book;
 					});
 
-					//태그들이 추가된 것을 확인한 후에 comment를 제거
-					$(".box").html(str);
+					$(".box").html(img);
 					$("form").submit();
-				}); // end btn-primary
+				}); // end btn-primaryh
+
+				$(document).on('change', '.booking_start', function (i){
+					$(this).attr('value', this.value);
+					$(this).parents("li").attr('data-start', this.value);
+				})
+				$(document).on('change', '.booking_end', function (i){
+					$(this).attr('value', this.value);
+					// console.log($(this).attr('data-start', this.value));
+					$(this).parents("li").attr('data-end', this.value);
+				}) // 시간 수정작업을 위한 함수
+
+				$('.btn_plus').on('click', function (){
+					var str ='';
+					str += "<li>";
+					str += "<label>추가 할 예약시간</label>";
+					str += "<a class='btn_delete' href='#'>삭제</a>";
+					str += "<input type='text' class='form-control booking_start' name='startDate'>";
+					str += "<input type='text' class='form-control booking_end' name='endDate'>";
+					str += "</li>";
+					console.log(str);
+					$('.uploadBooking ul').append(str);
+				})
+				$(document).on('click', '.btn_delete', function () {
+					$(this).parents("li").remove();
+				})
 
 			});
 		</script> <!--document ready-->

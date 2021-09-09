@@ -1,20 +1,38 @@
 package codehouse.simparty.service;
 
+import codehouse.simparty.dto.BookingDTO;
 import codehouse.simparty.dto.ClothesDTO;
 import codehouse.simparty.dto.PageRequestDTO;
 import codehouse.simparty.dto.PageResultDTO;
+import codehouse.simparty.entity.Booking;
 import codehouse.simparty.entity.Clothes;
+import codehouse.simparty.repository.BookingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 
 @SpringBootTest
 public class ClothesServiceTests {
 
     @Autowired
     private ClothesService clothesservice;
+    @Autowired
+    private BookingRepository bookingrepository;
 
+    @Transactional
     @Test
+    public void dateModifyTest() {
+        String end = "2021-09-20 20:20";
+        Booking booking = bookingrepository.getById(9L);
+        System.out.println("BEFORE 9L end_date: 2021-09-15T15:07:55");
+        booking.changeEndDate(end);
+        System.out.println(booking.getEndDate());
+    }
+
+/*    @Test
     public void SearchTest() {
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
@@ -38,5 +56,5 @@ public class ClothesServiceTests {
 
         System.out.println("==============================");
         resultDTO.getPageList().forEach(i -> System.out.println(i));
-    }
+    }*/
 }

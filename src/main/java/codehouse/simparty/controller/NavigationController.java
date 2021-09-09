@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class NavigationController {
 
+    @GetMapping("/index2")
+    public void main(){
+
+    }
+
     @GetMapping("")
     public String view_main() {
 

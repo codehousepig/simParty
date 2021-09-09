@@ -22,4 +22,12 @@ public class Clothes extends BaseEntity {
     private String title;
 
     private String keyword;
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 }

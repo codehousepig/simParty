@@ -49,6 +49,8 @@ public class ClothesController {
         System.out.println("cno = " + cno);
 
         ClothesDTO clothesDTO = clothesservice.read(cno);
+
+        System.out.println("CCont_read_ClothesDTO = " + clothesDTO);
         model.addAttribute("requestDTO", requestDTO);
         model.addAttribute("dto", clothesDTO);
     }
@@ -56,6 +58,7 @@ public class ClothesController {
     @PostMapping("/modify")
     public String modify(ClothesDTO clothesDTO, PageRequestDTO requestDTO, Model model, RedirectAttributes redirectAttributes) {
         log.info("=====ClothesController=====MODIFY=====");
+        System.out.println("CCont_modify_ClothesDTO = " + clothesDTO);
 
         clothesservice.modify(clothesDTO);
 

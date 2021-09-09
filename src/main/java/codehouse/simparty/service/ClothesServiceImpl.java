@@ -7,6 +7,7 @@ import codehouse.simparty.entity.Booking;
 import codehouse.simparty.entity.Clothes;
 import codehouse.simparty.entity.Image;
 import codehouse.simparty.entity.QClothes;
+import codehouse.simparty.repository.BookingRepository;
 import codehouse.simparty.repository.ClothesRepository;
 import codehouse.simparty.repository.ImageRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -32,6 +33,7 @@ public class ClothesServiceImpl implements ClothesService {
 
     private final ClothesRepository clothesrepository;
     private final ImageRepository imagerepository;
+    private final BookingRepository bookingrepository;
 
     @Transactional
     @Override
@@ -64,11 +66,15 @@ public class ClothesServiceImpl implements ClothesService {
         });
 
         List<Booking> bookingList = new ArrayList<>();
-        resultB.forEach(arr -> {
-            Booking booking = (Booking) arr[1];
-            System.out.println(booking);
-            bookingList.add(booking);
-        });
+        if (resultB.size() > 0) {
+            resultB.forEach(arr -> {
+                Booking booking = (Booking) arr[1];
+                System.out.println("Read_booking: " + booking); //
+                if (booking != null) {
+                    bookingList.add(booking); // 없을 때 추가하면 빈 공간이 생김.
+                }
+            });
+        }
 
         return entityToDTO(clothes, imageList, bookingList);
     }
@@ -77,30 +83,58 @@ public class ClothesServiceImpl implements ClothesService {
     @Override
     public void modify(ClothesDTO clothesDTO) {
         log.info("=====ClothesServiceImpl=====MODIFY=====");
+        System.out.println("Modify_ClothesDTO: " + clothesDTO);
 
+        Clothes clothes = clothesrepository.getOne(clothesDTO.getCno());
+        clothes.changeTitle(clothesDTO.getTitle());
+        clothes.changeKeyword(clothesDTO.getKeyword());
+
+        // 기존 정보 삭제
         Long cno = clothesDTO.getCno();
         List<Object[]> result = clothesrepository.getClothesWithImage(cno);
         result.forEach(arr -> {
             imagerepository.deleteById( ((Image)arr[1]).getInum() );
         });
+        List<Object[]> resultB = clothesrepository.getClothesWithBooking(cno);
+        resultB.forEach(arr -> {
+            if (((Booking) arr[1]) != null) {
+                bookingrepository.deleteById( ((Booking)arr[1]).getBno() );
+            }
+            System.out.println( "arr: " + ((Booking)arr[1]) );
+        });
 
         Map<String, Object> entityMap = dtoToEntity(clothesDTO);
-        Clothes clothes = (Clothes) entityMap.get("clothes");
+        // 저장하는 방식으로 정보 업데이트
+        clothes = (Clothes) entityMap.get("clothes");
         List<Image> imageList = (List<Image>) entityMap.get("imageList");
-
         imageList.forEach(i -> {
             imagerepository.save(i);
         });
+        List<Booking> bookingList = (List<Booking>) entityMap.get("bookingList");
+        if (bookingList == null) {
+            System.out.println("0이로군");
+        } else {
+            bookingList.forEach(i -> {
+                bookingrepository.save(i);
+            });
 
+        }
     }
 
     @Override
     public void remove(Long cno) {
-        List<Object[]> result = clothesrepository.getClothesWithImage(cno);
+        List<Object[]> resultI = clothesrepository.getClothesWithImage(cno);
+        List<Object[]> resultB = clothesrepository.getClothesWithBooking(cno);
 
-        result.forEach(arr -> {
+        resultI.forEach(arr -> {
             imagerepository.deleteById( ((Image)arr[1]).getInum() );
         });
+
+        if(resultB.size() > 0) {
+            resultB.forEach(arr -> {
+                bookingrepository.deleteById( ((Booking)arr[1]).getBno() );
+            });
+        }
 
         clothesrepository.deleteById(cno);
     }
