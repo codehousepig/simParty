@@ -22,7 +22,7 @@ public class ClothesServiceTests {
     @Autowired
     private BookingRepository bookingrepository;
 
-    @Transactional
+/*    @Transactional
     @Test
     public void dateModifyTest() {
         String end = "2021-09-20 20:20";
@@ -30,7 +30,7 @@ public class ClothesServiceTests {
         System.out.println("BEFORE 9L end_date: 2021-09-15T15:07:55");
         booking.changeEndDate(end);
         System.out.println(booking.getEndDate());
-    }
+    }*/
 
 /*    @Test
     public void SearchTest() {
