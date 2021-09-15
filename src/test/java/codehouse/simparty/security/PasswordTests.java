@@ -11,12 +11,12 @@ public class PasswordTests {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Test
+/*    @Test
     public void encodeTest() {
         String password = "11111";
         String enPw = passwordEncoder.encode(password);
         System.out.println("enPw: " + enPw);
         boolean matchResult = passwordEncoder.matches(password, enPw);
         System.out.println("matchResult: " + matchResult);
-    }
+    }*/
 }
