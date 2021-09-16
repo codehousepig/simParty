@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
-<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
-	<th:block th:fragment="content">
+<th:block th:replace="/layout/index :: Fhead"></th:block>
+<th:block th:replace="/layout/index :: Fbody"></th:block>
+
+<!--	<th:block th:fragment="content">-->
 	<h1 class="mt-4">Clothes List Page </h1>
 
-<!--		&lt;!&ndash;   검색창   &ndash;&gt;
+		<!--   검색창   -->
 		<form action="/simparty/categories/everything" method="get" id="searchForm">
 			<div class="input-group">
 				<p>제품 이름<input type="text" name="name"></p>
@@ -15,7 +17,7 @@
 				<button class="btn btn-outline-secondary btn_clear" type="button">초기화</button>
 			</div>
 		</form>
-		&lt;!&ndash;   /검색창   &ndash;&gt;
+		<!--   /검색창   -->
 
 	<table class="table table-striped">
 		<thead>
@@ -30,14 +32,14 @@
 		<tr th:each="dto : ${result.dtoList}">
 			<th scope="row">
 				<a th:href="@{/simparty/categories/read(cno = ${dto.cno}, page = ${result.page} )}">
-					 ${dto.cno}] ]
+					[[${dto.cno}]]
 				</a>
 			</th>
-			<td> [ [${dto.title}] ] </td>
+			<td> [[${dto.title}]] </td>
 			<td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].folderPath != null }"
 					 th:src="|/display?fileName=${dto.imageDTOList[0].getThumbnailURL()}|">
 			</td>
-			<td> [ [${#temporals.format(dto.regDate, 'yyyy/MM/dd')}] ]</td>
+			<td> [[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
 		</tr>
 		</tbody>
 	</table>
@@ -46,7 +48,7 @@
 			<a class="page-link" th:href="@{/simparty/categories/everything(page= ${result.start-1})}" tabindex="-1">Previous</a>
 		</li>
 		<li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page: ${result.pageList}">
-			<a class="page-link" th:href="@{/simparty/categories/everything(page= ${page})}">[ [ ${page} ] ]</a>
+			<a class="page-link" th:href="@{/simparty/categories/everything(page= ${page})}">[[ ${page} ]]</a>
 		</li>
 		<li class="page-item" th:if="${result.next}">
 			<a class="page-link" th:href="@{/simparty/categories/everything(page= ${result.end+1})}">Next</a>
@@ -59,7 +61,7 @@
 				</button>
 			</a>
 		</span>
-	</div>-->
+	</div>
 
 		<script th:inline="javascript">
 /*			var searchForm = $("#searchForm");
@@ -71,6 +73,5 @@
 			});
 		</script>
 
-	</th:block>
-</th:block>
+<th:block th:replace="/layout/index :: footerAndscript"></th:block>
 </html>
