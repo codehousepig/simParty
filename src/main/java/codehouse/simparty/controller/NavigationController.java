@@ -25,6 +25,12 @@ public class NavigationController {
     }
 
     @PreAuthorize("permitAll()")
+    @GetMapping("/test")
+    public void view_test() {
+
+    }
+
+    @PreAuthorize("permitAll()")
     @GetMapping("")
     public String view_main() {
 
