@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ public class FileController {
     @Value("C:/upload")
     private String uploadPath;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/uploadAjax")
     public ResponseEntity<List<ImageDTO>> uploadFile(MultipartFile[] uploadFiles) {
 
@@ -131,6 +133,7 @@ public class FileController {
         return result;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/removeFile")
     public ResponseEntity<Boolean> removeFile(String fileName){
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
-<th:block th:replace="~{/layout/NoUse_index :: setContent(~{this::content})}">
+<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
 	<th:block th:fragment="content">
 
 		<h1 class="mt-4">Read Page</h1>
@@ -33,11 +33,11 @@
 		</div>
 		</form>
 
-		<a th:href="@{/simparty/notice/modify(nno = ${dto.nno}, page = ${requestDTO.page})}">
+		<a sec:authorize="hasRole('ADMIN')" th:href="@{/simparty/notice/modify(nno = ${dto.nno}, page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-primary">수정</button>
 		</a>
 
-		<button type="button" class="btn btn-danger removeBtn">삭제</button>
+		<button sec:authorize="hasRole('ADMIN')" type="button" class="btn btn-danger removeBtn">삭제</button>
 
 		<a th:href="@{/simparty/notice(page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-info">목록</button>

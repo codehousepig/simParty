@@ -41,7 +41,8 @@ public class MemberLoginSuccessHandler implements AuthenticationSuccessHandler {
         boolean passwordResult = passwordEncoder.matches("1111", authMember.getPassword());
 
         if (fromSocial && passwordResult) {
-            redirectStrategy.sendRedirect(request, response, "/member/modify?from=social");
+//            redirectStrategy.sendRedirect(request, response, "/member/modify?from=social");
+            redirectStrategy.sendRedirect(request, response, "/simparty");
         }
     }
 }

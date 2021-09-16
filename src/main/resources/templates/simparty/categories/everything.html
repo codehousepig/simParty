@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
 	<th:block th:fragment="content">
@@ -52,7 +52,7 @@
 			<a class="page-link" th:href="@{/simparty/categories/everything(page= ${result.end+1})}">Next</a>
 		</li>
 	</ul>
-	<div>
+	<div sec:authorize="hasRole('ADMIN')">
 		<span>
 			<a th:href="@{/simparty/categories/register}">
 				<button type="button" class="btn btn-outline-primary">REGISTER
