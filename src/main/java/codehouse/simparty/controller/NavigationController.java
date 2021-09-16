@@ -34,7 +34,7 @@ public class NavigationController {
     @GetMapping("")
     public String view_main() {
 
-        return "redirect:/simparty/categories/index";
+        return "redirect:/simparty/categories/everything";
     }
 
     @PreAuthorize("permitAll()")
