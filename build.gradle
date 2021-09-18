@@ -41,6 +41,8 @@ dependencies {
     implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
 
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // 구글 로그인
+
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.68'
 }
 
 test {

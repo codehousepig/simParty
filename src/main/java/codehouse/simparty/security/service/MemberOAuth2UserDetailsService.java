@@ -75,7 +75,9 @@ public class MemberOAuth2UserDetailsService extends DefaultOAuth2UserService {
             return result.get();
         }
 
-        // 없다면 회원 추가 패스워드는 1111 이름은 그냥 이메일 주소로
+        return result.get();
+
+/*        // 없다면 회원 추가 패스워드는 1111 이름은 그냥 이메일 주소로
         Member member = Member.builder()
                 .email(email)
                 .name(email)
@@ -85,6 +87,6 @@ public class MemberOAuth2UserDetailsService extends DefaultOAuth2UserService {
         member.addMemberRole(MemberRole.ADMIN);
         repository.save(member);
 
-        return member;
+        return member;*/
     }
 }

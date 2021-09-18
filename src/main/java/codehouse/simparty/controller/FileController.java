@@ -1,6 +1,8 @@
 package codehouse.simparty.controller;
 
 import codehouse.simparty.dto.ImageDTO;
+import codehouse.simparty.service.AmazonS3Service;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +18,6 @@ import net.coobird.thumbnailator.Thumbnailator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,14 +30,20 @@ import java.util.UUID;
 
 @RestController
 @Log4j2
+@RequiredArgsConstructor
 public class FileController {
 
     @Value("C:/upload")
-    private String uploadPath;
+    private String uploadPath; // 디렉토리 주소
+    @Value("https://simparty.s3.ap-northeast-2.amazonaws.com/clothes")
+    private String uploadS3; // 디렉토리 주소
+
+    private final AmazonS3Service amazonS3Service;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/uploadAjax")
-    public ResponseEntity<List<ImageDTO>> uploadFile(MultipartFile[] uploadFiles) {
+    public ResponseEntity<List<ImageDTO>> uploadFile(MultipartFile[] uploadFiles) throws IOException {
+        log.info("=====FileController=====uploadFile=====");
 
         List<ImageDTO> resultDTOList = new ArrayList<>();
 
@@ -48,17 +55,23 @@ public class FileController {
 
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-
+/*          AmazonS3Service 로 이동
             // 실제 파일 이름 IE나 Edge는 전체 경로가 들어오므로
             String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
-            log.info("fileName: " + fileName);
+            log.info("fileName: " + fileName); */
 
+/*          로컬 폴더를 사용하지 않음 */
             // 날짜 폴더 생성
             String folderPath = makeFolder();
 
             // UUID
             String uuid = UUID.randomUUID().toString();
+            String fileName = amazonS3Service.getFilename(uploadFile);
+
+            // S3 업로드 구문
+            String dirPath = amazonS3Service.uploadStart(uploadFile, uuid);
+            log.info("dirPath: " + dirPath);
 
             // 저장할 파일 이름 중간에 "_" 를 이용해서 구분
             String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
@@ -76,7 +89,7 @@ public class FileController {
                 // 섬네일 생성
                 Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile,100,100 );
 
-                resultDTOList.add(new ImageDTO(fileName,uuid,folderPath));
+                resultDTOList.add(new ImageDTO(fileName,uuid,uploadS3));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -85,6 +98,7 @@ public class FileController {
         return new ResponseEntity<>(resultDTOList, HttpStatus.OK);
     }
 
+/*  S3 에서의 디렉토리 수정 */
     private String makeFolder() {
 
         String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
@@ -102,6 +116,7 @@ public class FileController {
 
     @GetMapping("/display")
     public ResponseEntity<byte[]> getFile(String fileName, String size) {
+        log.info("=====FileController=====getFile=====");
 
         ResponseEntity<byte[]> result = null;
 
@@ -110,7 +125,7 @@ public class FileController {
 
             log.info("fileName: " + srcFileName);
 
-            File file = new File(uploadPath +File.separator+ srcFileName);
+            File file = new File(uploadPath + File.separator + srcFileName);
 
             System.out.println("size: " + size);
             // 원본 이미지 조회 추가
@@ -136,20 +151,13 @@ public class FileController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/removeFile")
     public ResponseEntity<Boolean> removeFile(String fileName){
-
-        String srcFileName = null;
         try {
-            srcFileName = URLDecoder.decode(fileName,"UTF-8");
-            File file = new File(uploadPath +File.separator+ srcFileName);
-            boolean result = file.delete();
+            amazonS3Service.delete(fileName);
 
-            File thumbnail = new File(file.getParent(), "s_" + file.getName());
+            // 섬네일 삭제 부분 넣기
 
-            result = thumbnail.delete();
-
-            return new ResponseEntity<>(result, HttpStatus.OK);
-
-        } catch (UnsupportedEncodingException e) {
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }

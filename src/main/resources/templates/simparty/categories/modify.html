@@ -73,7 +73,7 @@
 						th:data-path="${img.folderPath}"
 						th:data-uuid="${img.uuid}"
 						>
-						<button type="button" th:data-file="${img.getImageURL()}" class="btn-warning btn-sm">X</button><br>
+						<button type="button" th:data-file="${img.getKey()}" class="btn-warning btn-sm">X</button><br>
 						<img th:if="${img.folderPath != null}" th:src="|/display?fileName=${img.getThumbnailURL()}|"
 							 th:data-file="${img.getThumbnailURL()}">
 					</li>

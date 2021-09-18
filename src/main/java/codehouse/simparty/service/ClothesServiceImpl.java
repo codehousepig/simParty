@@ -123,14 +123,17 @@ public class ClothesServiceImpl implements ClothesService {
 
     @Override
     public void remove(Long cno) {
+        log.info("=====ClothesServiceImpl=====REMOVE=====");
+        System.out.println("Remove_CNO: " + cno);
         List<Object[]> resultI = clothesrepository.getClothesWithImage(cno);
         List<Object[]> resultB = clothesrepository.getClothesWithBooking(cno);
+
 
         resultI.forEach(arr -> {
             imagerepository.deleteById( ((Image)arr[1]).getInum() );
         });
 
-        if(resultB.size() > 0) {
+        if(resultB.get(0)[1] != null) {
             resultB.forEach(arr -> {
                 bookingrepository.deleteById( ((Booking)arr[1]).getBno() );
             });

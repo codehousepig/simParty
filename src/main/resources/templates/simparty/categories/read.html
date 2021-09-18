@@ -62,7 +62,7 @@
 					<li th:each="img: ${dto.imageDTOList}">
 						<div th:if="${img == null}">(첨부 파일이 없습니다)</div>
 						<div th:unless="${img == null}">
-							<img th:if="${img.folderPath != null}" th:src="|/display?fileName=${img.getImageURL()}|"
+							<img th:if="${img.folderPath != null}" th:src="${img.getImageURL()}"
 								 th:data-file="${img.getImageURL()}">
 						</div>
 					</li>
