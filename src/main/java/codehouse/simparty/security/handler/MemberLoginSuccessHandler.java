@@ -42,7 +42,7 @@ public class MemberLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         if (fromSocial && passwordResult) {
 //            redirectStrategy.sendRedirect(request, response, "/member/modify?from=social");
-            redirectStrategy.sendRedirect(request, response, "/simparty");
+            redirectStrategy.sendRedirect(request, response, "/");
         }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/simparty")
+@RequestMapping("/")
 @Log4j2
 @RequiredArgsConstructor
 public class NavigationController {
@@ -21,7 +21,7 @@ public class NavigationController {
     public String view_info(@AuthenticationPrincipal AuthMemberDTO authMember){
         log.info("=====view_info=====");
         log.info(authMember);
-        return "/simparty/chunu";
+        return "/chunu";
     }
 
     @PreAuthorize("permitAll()")
@@ -34,7 +34,7 @@ public class NavigationController {
     @GetMapping("")
     public String view_main() {
 
-        return "redirect:/simparty/categories/everything";
+        return "redirect:/categories/everything";
     }
 
     @PreAuthorize("permitAll()")

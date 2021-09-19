@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/simparty/categories")
+@RequestMapping("/categories")
 @Log4j2
 @RequiredArgsConstructor
 public class ClothesController {
@@ -44,7 +44,7 @@ public class ClothesController {
 
         redirectAttributes.addFlashAttribute("msg", cno);
 
-        return "redirect:/simparty/categories/everything";
+        return "redirect:/categories/everything";
     }
 
     @GetMapping("/read")
@@ -84,7 +84,7 @@ public class ClothesController {
         redirectAttributes.addAttribute("cno", clothesDTO.getCno());
         redirectAttributes.addAttribute("page", requestDTO.getPage());
 
-        return "redirect:/simparty/categories/read";
+        return "redirect:/categories/read";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -95,6 +95,6 @@ public class ClothesController {
         clothesservice.remove(cno);
         redirectAttributes.addFlashAttribute("msg", cno);
 
-        return "redirect:/simparty/categories/everything";
+        return "redirect:/categories/everything";
     }
 }

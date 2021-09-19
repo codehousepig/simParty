@@ -33,13 +33,13 @@
 		</div>
 		</form>
 
-		<a sec:authorize="hasRole('ADMIN')" th:href="@{/simparty/notice/modify(nno = ${dto.nno}, page = ${requestDTO.page})}">
+		<a sec:authorize="hasRole('ADMIN')" th:href="@{/templates/notice/modify(nno = ${dto.nno}, page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-primary">수정</button>
 		</a>
 
 		<button sec:authorize="hasRole('ADMIN')" type="button" class="btn btn-danger removeBtn">삭제</button>
 
-		<a th:href="@{/simparty/notice(page = ${requestDTO.page})}">
+		<a th:href="@{/notice(page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-info">목록</button>
 		</a>
 
@@ -48,7 +48,7 @@
 
 			$(".removeBtn").click(function () {
 				actionForm
-						.attr("action", "/simparty/notice/remove")
+						.attr("action", "/notice/remove")
 						.attr("method", "post");
 				console.log(actionForm);
 				actionForm.submit();

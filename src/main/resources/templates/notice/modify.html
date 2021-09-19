@@ -5,7 +5,7 @@
 	<th:block th:fragment="content">
 		<h1 class="mt-4">Modify Page</h1>
 
-		<form action="/simparty/notice/modify" method="post">
+		<form action="/notice/modify" method="post">
 
 		<input type="hidden" name="page" th:value="${requestDTO.page}">
 
@@ -47,7 +47,7 @@
 							return;
 						}
 						actionForm
-								.attr("action", "/simparty/notice/modify")
+								.attr("action", "/notice/modify")
 								.attr("method", "post")
 								.submit();
 					}
@@ -58,7 +58,7 @@
 							return;
 						}
 						actionForm
-								.attr("action", "/simparty/notice/read")
+								.attr("action", "/notice/read")
 								.attr("method", "get")
 								.submit();
 					}
