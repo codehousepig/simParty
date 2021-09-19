@@ -70,13 +70,13 @@
 			</div>
 		</form>
 
-		<a sec:authorize="hasRole('ADMIN')" th:href="@{/templates/categories/modify(cno = ${dto.cno}, page = ${requestDTO.page})}">
+		<a sec:authorize="hasRole('ADMIN')" th:href="@{/categories/modify(cno = ${dto.cno}, page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-primary">수정</button>
 		</a>
 
 		<button sec:authorize="hasRole('ADMIN')" type="button" class="btn btn-danger removeBtn">삭제</button>
 
-		<a th:href="@{/templates/categories/everything(page = ${requestDTO.page})}">
+		<a th:href="@{/categories/everything(page = ${requestDTO.page})}">
 			<button type="button" class="btn btn-info">목록</button>
 		</a>
 

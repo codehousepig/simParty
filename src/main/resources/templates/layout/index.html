@@ -25,7 +25,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" th:href="@{/templates/categories/everything}">simparty</a>
+                <a class="navbar-brand" th:href="@{/categories/everything}">simparty</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -33,7 +33,7 @@
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">의상</a>
 							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<li><a class="dropdown-item" th:href="@{/templates/categories/everything}">전체 의상</a></li>
+								<li><a class="dropdown-item" th:href="@{/categories/everything}">전체 의상</a></li>
 								<li><hr class="dropdown-divider" /></li>
 								<form action="/categories/everything" method="get" id="keywordForm">
 									<button class="dropdown-item btn_search" name="keyword" value="christmas">크리스마스</button>
@@ -51,7 +51,7 @@
 
                         <li class="nav-item"><a class="nav-link active" th:href="@{/partyroom}">파티룸</a></li>
                         <li class="nav-item"><a class="nav-link active" th:href="@{/celebrity}">셀럽</a></li>
-                        <li class="nav-item"><a class="nav-link active" th:href="@{/templates/notice}">공지사항</a></li>
+                        <li class="nav-item"><a class="nav-link active" th:href="@{/notice}">공지사항</a></li>
                         <li class="nav-item"><a class="nav-link active" th:href="@{/charge}">이용요금</a></li>
 
                     </ul>

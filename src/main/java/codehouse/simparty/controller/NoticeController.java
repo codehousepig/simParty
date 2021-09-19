@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
-@RequestMapping("/simparty/notice")
+@RequestMapping("/notice")
 @RequiredArgsConstructor
 public class NoticeController {
 
@@ -42,7 +42,7 @@ public class NoticeController {
         log.info("=====NoticeController=====REG_NOTICE=====");
         Long nno = noticeservice.register(noticeDTO);
         redirectAttributes.addFlashAttribute("msg", nno);
-        return "redirect:/simparty/notice";
+        return "redirect:/notice";
     }
 
     @PreAuthorize("permitAll()")
@@ -78,7 +78,7 @@ public class NoticeController {
         redirectAttributes.addAttribute("nno", noticeDTO.getNno());
         redirectAttributes.addAttribute("page", requestDTO.getPage());
 
-        return "redirect:/simparty/notice/read";
+        return "redirect:/notice/read";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -89,6 +89,6 @@ public class NoticeController {
         noticeservice.remove(nno);
         redirectAttributes.addFlashAttribute("msg", nno);
 
-        return "redirect:/simparty/notice";
+        return "redirect:/notice";
     }
 }
