@@ -38,11 +38,8 @@ public class ImageDTO {
     }
 
     public String getThumbnailURL() {
-        try {
-            return URLEncoder.encode(folderPath + "/s_" + uuid + "_" + fileName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "";
+        String s3buckets = "https://simparty.s3.ap-northeast-2.amazonaws.com/thumbnail";
+        String url = s3buckets + "/s_" + uuid + "_" + fileName;
+        return url;
     }
 }

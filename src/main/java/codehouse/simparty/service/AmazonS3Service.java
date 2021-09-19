@@ -27,6 +27,7 @@ public class AmazonS3Service {
     public String bucket;  // S3 버킷 이름
 
     String dirName = "clothes"; // S3 버킷 밑에 저장될 디텍토리 경로
+    String thumbnail = "thumbnail"; // S3 버킷 밑에 저장될 섬네일 경로
 
     public void delete(String fileName) {
         try {
@@ -48,6 +49,15 @@ public class AmazonS3Service {
     private String uploadMiddle(File uploadFile, String uuid) {
         // S3에 저장될 경로를 포함한 파일 이름
         String fileName = dirName + "/" + uuid + "_" + uploadFile.getName(); // == dirName + File.separator + ...
+        String uploadImageUrl = upload(uploadFile, fileName); // S3로 업로드
+        removeNewFile(uploadFile); // 변환 파일 삭제
+        return uploadImageUrl;
+    }
+
+    // S3로 파일 업로드 호출과 부가적인 기능
+    public String uploadThumbnail(File uploadFile, String uuid) {
+        // S3에 저장될 경로를 포함한 파일 이름
+        String fileName = thumbnail + "/" + "s_" + uuid + "_" + uploadFile.getName(); // == dirName + File.separator + ...
         String uploadImageUrl = upload(uploadFile, fileName); // S3로 업로드
         removeNewFile(uploadFile); // 변환 파일 삭제
         return uploadImageUrl;

@@ -33,10 +33,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileController {
 
-    @Value("C:/upload")
-    private String uploadPath; // 디렉토리 주소
+    @Value("C:/simparty_imagesTemp")
+    private String uploadTemp; // 디렉토리 주소
     @Value("https://simparty.s3.ap-northeast-2.amazonaws.com/clothes")
-    private String uploadS3; // 디렉토리 주소
+    private String uploadSimClothes; // 디렉토리 주소
 
     private final AmazonS3Service amazonS3Service;
 
@@ -55,63 +55,44 @@ public class FileController {
 
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-/*          AmazonS3Service 로 이동
-            // 실제 파일 이름 IE나 Edge는 전체 경로가 들어오므로
-            String originalName = uploadFile.getOriginalFilename();
-            String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
-            log.info("fileName: " + fileName); */
-
-/*          로컬 폴더를 사용하지 않음 */
-            // 날짜 폴더 생성
-            String folderPath = makeFolder();
-
             // UUID
             String uuid = UUID.randomUUID().toString();
             String fileName = amazonS3Service.getFilename(uploadFile);
 
-            // S3 업로드 구문
-            String dirPath = amazonS3Service.uploadStart(uploadFile, uuid);
-            log.info("dirPath: " + dirPath);
+            // 원본 S3 업로드 시작
+            String clothesDirPath = amazonS3Service.uploadStart(uploadFile, uuid);
+            log.info("ClothesDirPath: " + clothesDirPath);
 
             // 저장할 파일 이름 중간에 "_" 를 이용해서 구분
-            String saveName = uploadPath + File.separator + folderPath + File.separator + uuid + "_" + fileName;
+            String saveName = uploadTemp + File.separator + fileName;
             Path savePath = Paths.get(saveName);
-
             try {
-                //원본 파일 저장
+                //원본 파일 임시 저장
                 uploadFile.transferTo(savePath);
 
                 // 섬네일 생성 추가
-                String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator
-                        +"s_" + uuid +"_" + fileName;
+                String thumbnailSaveName = uploadTemp + File.separator + fileName;
+                System.out.println(thumbnailSaveName);
+
                 // 섬네일 파일 이름은 중간에 s_로 시작하도록
                 File thumbnailFile = new File(thumbnailSaveName);
-                // 섬네일 생성
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile,100,100 );
+                System.out.println(thumbnailFile);
 
-                resultDTOList.add(new ImageDTO(fileName,uuid,uploadS3));
+                // 섬네일 생성
+                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile,270,337 );
+                System.out.println("ThumbnailFile Size: " + thumbnailFile.length());
+
+                // 섬네일 로컬 파일 삭제
+                String thumbnailDirPath = amazonS3Service.uploadThumbnail(thumbnailFile, uuid);
+                log.info("ThumbnailDirPath: " + thumbnailDirPath);
+
+                resultDTOList.add(new ImageDTO(fileName,uuid,uploadSimClothes));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         } // end for
         return new ResponseEntity<>(resultDTOList, HttpStatus.OK);
-    }
-
-/*  S3 에서의 디렉토리 수정 */
-    private String makeFolder() {
-
-        String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-        String folderPath =  str.replace("//", File.separator);
-
-        // make folder --------
-        File uploadPathFolder = new File(uploadPath, folderPath);
-
-        if (uploadPathFolder.exists() == false) {
-            uploadPathFolder.mkdirs();
-        }
-        return folderPath;
     }
 
     @GetMapping("/display")
@@ -125,7 +106,7 @@ public class FileController {
 
             log.info("fileName: " + srcFileName);
 
-            File file = new File(uploadPath + File.separator + srcFileName);
+            File file = new File(uploadTemp + File.separator + srcFileName);
 
             System.out.println("size: " + size);
             // 원본 이미지 조회 추가
