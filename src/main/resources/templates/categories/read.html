@@ -1,68 +1,153 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+	  xmlns="http://www.w3.org/1999/html">
 
 <th:block th:replace="~{./layout/index :: setContent(~{this::content})}">
 	<th:block th:fragment="content">
 
-		<h1 class="mt-4">Read Page</h1>
 		<form action="" method="">
 
-			<div class="form-group">
-				<label >CNO</label>
+			<div sec:authorize="hasRole('ADMIN')" class="form-group">
+				<label >등록번호</label>
 				<input type="text" class="form-control" name="cno" th:value="${dto.cno}" readonly>
 			</div>
-			<div class="form-group">
-				<label >Title</label>
-				<input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
-			</div>
-			<div>
-				<label >RegDate</label>
+			<div sec:authorize="hasRole('ADMIN')">
+				<label >등록날짜</label>
 				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
 			</div>
-			<div>
-				<label >ModDate</label>
+			<div sec:authorize="hasRole('ADMIN')">
+				<label >수정날짜</label>
 				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
 			</div>
-			<div>
-				<ul>
-					<li th:each="booking: ${dto.bookingDTOList}">
-						<label th:if="${not #strings.isEmpty(booking)}">예약시간</label>
-						<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy/MM/dd HH:mm')}" readonly>
-						<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy/MM/dd HH:mm')}" readonly>
-					</li>
+
+			<div class="container px-4 px-lg-5 my-5">
+				<div class="row gx-4 gx-lg-5 align-items-center">
+					<div class="col-md-6" id="readThumbnail">
+						<img class="card-img-top mb-5 mb-md-0" th:src="${dto.imageDTOList[0].getImageURL()}" alt="..." />
+					</div>
+					<div class="col-md-6">
+						<div class="small mb-1">
+							<a href="/categories/everything?keyword=doll&type=k&page=1">
+								#<input type="button" class="inputline" name="keyword" th:value="${dto.keyword}" readonly>
+							</a>
+						</div>
+						<input type="text" class="display-5 fw-bolder inputline" name="title" th:value="${dto.title}" readonly>
+						<div>
+							<p class="thumbph ">서비스 요금</p>
+							<p class="thumbph">※보증금: 2만원</p>
+							<p class="thumbph">ex)1박2일 의상대여 1벌 5만원 + 보증금 2만원. 합계 7만원</p>
+							<p style="margin-bottom: 30px">의상 및 소품 훼손, 분실, 오염 있을시 비용이 청구 될 수 있습니다.</p>
+
+							<span>의상대여 1시간</span><span>BEST</span><span>15,000</span>
+							<p class="thumbpb">의상 한 벌 + 소품</p>
+							<span>의상대여 3시간</span><span>    </span><span>30,000</span>
+							<p class="thumbpb">의상 한 벌 + 소품</p>
+							<span>의상대여 6시간</span><span>    </span><span>40,000</span>
+							<p class="thumbpb">의상 한 벌 + 소품</p>
+							<span>의상대여 하루</span><span>    </span><span>45,000</span>
+							<p class="thumbph">의상 한 벌 + 소품</p>
+							<p class="thumbpb">(11:00 a.m ~ 22:00 p.m</p>
+							<span>의상대여 1박2일</span><span>BEST</span><span>50,000</span>
+							<p class="thumbph">의상 한 벌 + 소품</p>
+							<p class="thumbpb">(대여시간 기준 24시간)</p>
+
+							<span>스튜디오(파티룸)대관</span><span>NEW</span>
+							<p class="thumbph">'스페이스클라우드' 사이트 들어가서 '심파티'검색후 예약 진행해주세요 ↓</p>
+							<a  class="thumbpb" href="https://www.spacecloud.kr/space/20927?type=search" target="_blank" >이동하기</a>
+						</div>
+
+						<div class="d-flex">
+							<input id="today-search" type="date" class="form-control booking_start" name="startDate" style="max-width: 10rem">
+							<button class="btn btn-outline-dark flex-shrink-0 btn-search" type="button">
+								예약확인하기
+							</button>
+						</div>
+						<div class="today-search">
+							<ul style="list-style: none; padding-left: 5px">
+								<!-- 원하는 날짜 -->
+								<div id="today-searchd" style="display: none">
+									<label>예약상황</label>
+								</div>
+								<li id="sss" class="hidden" style="display: none"
+									th:each="booking: ${dto.bookingDTOList}"
+									th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
+									th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}"
+									th:if="${booking.searchday()}">
+									<div class="row">
+										<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"  style="max-width: 10rem" readonly>~
+										<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}"  style="max-width: 10rem" readonly>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+
+			<div class="readBooking">
+				<ul style="list-style: none">
+					<!-- 당일 -->
+					<label class="readbookLabel">예약시간 - 오늘: </label>
+					<div class="readbookInput">
+						<li th:each="booking: ${dto.bookingDTOList}"
+							th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-daystart="${booking.daystart()}"
+							th:data-dayend="${booking.dayend()}"
+							th:if="${booking.today()}">
+							<div class="row">
+									<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>~
+									<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>
+							</div>
+						</li>
+					</div>
+					<div id="bookingToday"></div>
+					<!-- 내일 -->
+					<label class="readbookLabel">예약시간 - 내일: </label>
+					<div class="readbookInput">
+						<li th:each="booking: ${dto.bookingDTOList}"
+							th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-daystart="${booking.daystart()}"
+							th:data-dayend="${booking.dayend()}"
+							th:if="${booking.day1()}">
+							<div class="row">
+								<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>~
+								<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>
+							</div>
+						</li>
+					</div>
+					<div id="bookingDay1"></div>
+					<!-- 모레 -->
+					<label class="readbookLabel">예약시간 - 모레: </label>
+					<div class="readbookInput">
+						<li th:each="booking: ${dto.bookingDTOList}"
+							th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}"
+							th:data-daystart="${booking.daystart()}"
+							th:data-dayend="${booking.dayend()}"
+							th:if="${booking.day2()}">
+							<div class="row">
+								<input type="text" class="form-control" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>~
+								<input type="text" class="form-control" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}" style="max-width: 10rem" readonly>
+							</div>
+						</li>
+					</div>
+					<div id="bookingDay2"></div>
 				</ul>
 			</div>
 
-			<style>
-				.uploadResult {
-					width: 100%;
-					background-color: gray;
-					margin-top: 10px;
-				}
-				.uploadResult ul {
-					display: flex;
-					flex-flow: row;
-					justify-content: center;
-					align-items: center;
-					vertical-align: top;
-					overflow: auto;
-				}
-				.uploadResult ul li {
-					list-style: none;
-					padding: 10px;
-					margin-left: 2em;
-				}
-				.uploadResult ul li img {
-					width: 100px;
-				}
-			</style>
 
-			<div class="">
+<!--			&lt;!&ndash;	예약바	&ndash;&gt;
+			<div id="bookingBar">
+			</div>-->
+
+			<div class="imgbox">
 				<ul>
 					<li th:each="img: ${dto.imageDTOList}">
 						<div th:if="${img == null}">(첨부 파일이 없습니다)</div>
 						<div th:unless="${img == null}">
-							<img th:if="${img.folderPath != null}" th:src="${img.getImageURL()}"
+							<img class="originalimg" th:if="${img.folderPath != null}" th:src="${img.getImageURL()}"
 								 th:data-file="${img.getImageURL()}">
 						</div>
 					</li>
@@ -80,15 +165,165 @@
 			<button type="button" class="btn btn-info">목록</button>
 		</a>
 
+		</div> <!-- container -->
 		<script th:inline="javascript">
-			var actionForm = $("form"); // 태그 객체
+			$(document).ready(function (e) {
+				var actionForm = $("form"); // 태그 객체
 
-			$(".removeBtn").click(function () {
-				actionForm
-						.attr("action", "/categories/remove")
-						.attr("method", "post");
-				console.log(actionForm);
-				actionForm.submit();
+				$(".removeBtn").click(function () {
+					actionForm
+							.attr("action", "/categories/remove")
+							.attr("method", "post");
+					console.log(actionForm);
+					actionForm.submit();
+				});
+
+				// 예약 막대로 표현하기
+				function booking() {
+					var str = '';
+					plus = 33;
+					var strplus = '';
+					$(".readBooking li").each(function(i, obj){
+						str = "<div id='booking"+i+"'></div>";
+						strplus = "<div id='booking"+plus+"'></div>";
+						var now = new Date();
+						var day = now.getDate();
+
+						var target = $(obj);
+						var x = target.data('start');
+						var y = target.data('end');
+						var xz = x.substr(8, 2);
+						var yz = y.substr(8, 2);
+						console.log(xz);
+						console.log(yz);
+						console.log("index: " + plus);
+
+						if (day == xz) {
+							console.log(day == xz);
+							$('#bookingToday').append(str);
+							if (xz != yz) {
+								console.log("첫번째");
+								$('#bookingDay1').append(strplus);
+								plus++;
+							}
+						} else if (day + 1 == xz) {
+							console.log(day+1 == xz);
+							$('#bookingDay1').append(str);
+							if (xz != yz) {
+								console.log("두번째");
+								$('#bookingDay2').append(strplus);
+								plus++;
+							}
+						} else if (day + 2 == xz) {
+							console.log(day+2 == xz);
+							$('#bookingDay2').append(str);
+						}
+					});
+					console.log("plus: " + plus);
+				}
+				booking();
+
+				pplus = 33;
+				function progres() {
+					$(".readBooking li").each(function (i, obj) {
+						var sel = "booking" + i;
+						var target = $(obj);
+						var start = target.data('start');
+						var daystart = target.data('daystart');
+						var end = target.data('end');
+						var dayend = target.data('dayend');
+
+						var sstr = '';
+
+						var sst = start.substr(8, 2);
+						var een = end.substr(8, 2);
+
+						var se = een - sst;
+
+						console.log(sel);
+						console.log(target);
+						console.log(daystart);
+						console.log(dayend);
+						console.log("se: " + se);
+
+						if (dayend > 660 || se == 1) {
+							var dayendd = 660;
+							var dayenddd = dayend;
+							console.log(dayenddd);
+
+							var leftt = 0;
+							var widtht = Math.round((dayenddd / 660) * 100);
+
+							console.log(leftt);
+							console.log(widtht);
+
+								var sell = "booking" + pplus;
+								console.log("pplus: "+ pplus);
+								console.log("sell: "+ sell);
+								document.getElementById(sell).style.left = leftt + '%';
+								document.getElementById(sell).style.width = widtht + '%';
+								pplus++;
+
+							console.log("dayendd: " + dayendd);
+
+						} else {
+							dayendd = dayend;
+						}
+
+
+
+						var left = Math.round((daystart / 660) * 100);
+						var width = Math.round((dayendd / 660) * 100) - left;
+
+						console.log(left);
+						console.log(width);
+
+						document.getElementById(sel).style.left = left + '%';
+						document.getElementById(sel).style.width = width + '%';
+					});
+				}
+				progres();
+				// ~ 예약 막대로 표현하기
+
+				// 예약을 원하는 날짜 Search ~
+				$(document).on('change', '.booking_start', function (i){
+					$(this).attr('value', this.value);
+					$(this).parents("li").attr('data-start', this.value);
+				})
+
+				$('.btn-search').on('click', function () {
+					var search = document.getElementById("today-search").value;
+					console.log("선택한 날짜: " + search);
+
+					$('#today-searchd').show();
+
+					$(".today-search li").each(function (i, obj) {
+						var target = $(obj);
+						var x = target.data('start');
+						var y = target.data('end');
+						var xz = x.substr(0, 10);
+						var yz = y.substr(0, 10);
+						console.log(xz);
+						console.log(yz);
+						console.log(i);
+
+
+						if (search == xz) {
+							console.log("시작일 맞음");
+							target.show(i);
+						}
+						if (search != xz) {
+							console.log("노노");
+							target.hide(i);
+						}
+						if (search == yz) {
+							console.log("마지막일 맞음");
+							target.show(i);
+						}
+					});
+
+				}); // ~ 예약을 원하는 날짜 Search
+
 			});
 		</script>
 	</th:block>
