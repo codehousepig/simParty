@@ -1,9 +1,6 @@
 package codehouse.simparty.repository.search;
 
-import codehouse.simparty.entity.Clothes;
-import codehouse.simparty.entity.QBooking;
-import codehouse.simparty.entity.QClothes;
-import codehouse.simparty.entity.QImage;
+import codehouse.simparty.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -18,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,12 +27,15 @@ public class SearchClothesRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public Page<Object[]> searchPage(String type, String name, String keyword, Pageable pageable) {
+    public Page<Object[]> searchPage(String type, String name, String keyword, LocalDateTime date, Pageable pageable) {
         log.info("=====SearchClothesRepositoryImpl=====searchPage=====");
 
         QClothes clothes = QClothes.clothes;
         QImage image = QImage.image;
         QBooking booking = QBooking.booking;
+
+        JPQLQuery<Booking> jpqboo1 = from(booking); // 서브쿼리 용도
+        JPQLQuery<Booking> jpqboo2 = from(booking); // 서브쿼리 용도
 
         JPQLQuery<Clothes> jpqlQuery = from(clothes);
         jpqlQuery.leftJoin(image).on(image.clothes.eq(clothes));
@@ -59,6 +60,22 @@ public class SearchClothesRepositoryImpl extends QuerydslRepositorySupport imple
                     case "k":
                         conditionBuilder.or(clothes.keyword.contains(keyword));
                         break;
+                    case "d":
+                        if (date == null) {
+                            break;
+                        } else {
+                            BooleanBuilder sub = new BooleanBuilder();
+                            BooleanBuilder sub2 = new BooleanBuilder();
+
+                            sub2.and(booking.startDate.lt(date));
+                            sub2.and(booking.endDate.gt(date));
+
+                            sub.or(booking.clothes.in(jpqboo2.where(sub2).select(booking.clothes)));
+                            conditionBuilder.or(booking.bno.notIn(jpqboo1.where(sub).select(booking.bno)));
+
+                            conditionBuilder.or(booking.startDate.isNull());
+                            break;
+                        }
                     case "kt":
                         conditionBuilder.or(clothes.keyword.contains(keyword));
                         conditionBuilder.or(clothes.title.contains(name));
@@ -98,29 +115,6 @@ public class SearchClothesRepositoryImpl extends QuerydslRepositorySupport imple
                 pageable,
                 count
         );
-    }
-
-    @Override
-    public Clothes searchTest() {
-/*        log.info("=====SearchClothesRepositoryImpl=====searchTest=====");
-
-        QClothes clothes = QClothes.clothes;
-        QImage image = QImage.image;
-
-        JPQLQuery<Clothes> jpqlQuery = from(clothes);
-        jpqlQuery.leftJoin(image).on(image.clothes.eq(clothes));
-
-//        jpqlQuery.select(clothes, image).groupBy(clothes);
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(clothes, image);
-        tuple.groupBy(clothes);
-
-        System.out.println("------------------------------");
-        System.out.println(jpqlQuery);
-        System.out.println("------------------------------");
-
-        List<Clothes> result = jpqlQuery.fetch();*/
-
-        return null;
     }
 
 }

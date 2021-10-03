@@ -33,12 +33,12 @@
 			<div class="uploadBooking">
 				<ul class="booking_delete">
 					<li th:each="booking: ${dto.bookingDTOList}"
-						th:data-start="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}"
-						th:data-end="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}">
+						th:data-start="${booking.startDate}"
+						th:data-end="${booking.endDate}">
 						<label th:if="${not #strings.isEmpty(booking)}">예약시간</label>
 						<a class='btn_delete' href='#'>삭제</a>
-						<input type="text" class="form-control booking_start" name="startDate" th:value="${#temporals.format(booking.startDate, 'yyyy-MM-dd HH:mm')}">
-						<input type="text" class="form-control booking_end" name="endDate" th:value="${#temporals.format(booking.endDate, 'yyyy-MM-dd HH:mm')}">
+						<input type="datetime-local" class="form-control booking_start" name="startDate" th:value="${booking.startDate}">
+						<input type="datetime-local" class="form-control booking_end" name="endDate" th:value="${booking.endDate}">
 					</li>
 				</ul>
 			</div>
@@ -249,8 +249,8 @@
 					str += "<li>";
 					str += "<label>추가 할 예약시간</label>";
 					str += "<a class='btn_delete' href='#'>삭제</a>";
-					str += "<input type='text' class='form-control booking_start' name='startDate'>";
-					str += "<input type='text' class='form-control booking_end' name='endDate'>";
+					str += "<input type='datetime-local' class='form-control booking_start' name='startDate'>";
+					str += "<input type='datetime-local' class='form-control booking_end' name='endDate'>";
 					str += "</li>";
 					console.log(str);
 					$('.uploadBooking ul').append(str);

@@ -4,20 +4,30 @@
 <th:block th:replace="~{./layout/index :: setContent(~{this::content})}">
 	<th:block th:fragment="content">
 
-		<!--   검색창   -->
-		<form action="/categories/everything" method="get" id="searchForm">
-			<div class="input-group">
-				<p>제품 이름<input type="text" name="name"></p>
-				<input type='hidden' name='type' value='n'>
-				<input type='hidden' name='page' value='1'>
-				<input type="submit" value="Submit">
-				<button class="btn btn-outline-secondary btn_clear" type="button">초기화</button>
-			</div>
-		</form>
-		<!--   /검색창   -->
-
 		<section class="py-5">
 			<div class="container px-4 px-lg-5 mt-5">
+				<!--   검색창   -->
+				<form action="/categories/everything" method="get" id="searchForm">
+					<div class="d-flex">
+						<input type="text" name="name" placeholder="의상 이름">
+						<input type='hidden' name='type' value='n'>
+						<input type='hidden' name='page' value='1'>
+						<input class="btn btn-outline-dark flex-shrink-0 btn-search" type="submit" value="Submit">
+						<button class="btn btn-outline-secondary btn_clear" type="button">초기화</button>
+					</div>
+				</form>
+				<!--   /검색창   -->
+				<!--   검색창   -->
+				<form action="/categories/everything" method="get" id="">
+					<div class="d-flex">
+						<input type='hidden' name='type' value='d'>
+						<input type='hidden' name='page' value='1'>
+						<input id="today-search" type="datetime-local" class="form-control booking_start" name="date" style="max-width: 16rem">
+						<input class="btn btn-outline-dark flex-shrink-0 btn-search" type="submit" value="예약확인하기">
+					</div>
+				</form>
+				<!--   /검색창   -->
+
 				<div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
 					<div th:each="dto : ${result.dtoList}" class="col mb-5">
@@ -41,30 +51,27 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
 		</section>
-
-	<ul class="pagination h-100 justify-content-center align-items-center">
-		<li class="page-item" th:if="${result.prev}">
-			<a class="page-link" th:href="@{/categories/everything(page= ${result.start-1})}" tabindex="-1">Previous</a>
-		</li>
-		<li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page: ${result.pageList}">
-			<a class="page-link" th:href="@{/categories/everything(page= ${page})}">[[ ${page} ]]</a>
-		</li>
-		<li class="page-item" th:if="${result.next}">
-			<a class="page-link" th:href="@{/categories/everything(page= ${result.end+1})}">Next</a>
-		</li>
-	</ul>
-	<div sec:authorize="hasRole('ADMIN')">
-		<span>
-			<a th:href="@{/categories/register}">
-				<button type="button" class="btn btn-outline-primary">REGISTER
-				</button>
-			</a>
-		</span>
-	</div>
+		<ul class="pagination h-100 justify-content-center align-items-center">
+			<li class="page-item" th:if="${result.prev}">
+				<a class="page-link" th:href="@{/categories/everything(page= ${result.start-1})}" tabindex="-1">Previous</a>
+			</li>
+			<li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page: ${result.pageList}">
+				<a class="page-link" th:href="@{/categories/everything(page= ${page})}">[[ ${page} ]]</a>
+			</li>
+			<li class="page-item" th:if="${result.next}">
+				<a class="page-link" th:href="@{/categories/everything(page= ${result.end+1})}">Next</a>
+			</li>
+		</ul>
+		<div sec:authorize="hasRole('ADMIN')">
+			<span>
+				<a th:href="@{/categories/register}">
+					<button type="button" class="btn btn-outline-primary">REGISTER</button>
+				</a>
+			</span>
+		</div>
 
 		<script th:inline="javascript">
 /*			var searchForm = $("#searchForm");

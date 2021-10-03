@@ -161,6 +161,7 @@ public class ClothesServiceImpl implements ClothesService {
                 requestDTO.getType(),
                 requestDTO.getName(),
                 requestDTO.getKeyword(),
+                requestDTO.getDate(),
                 requestDTO.getPageable(Sort.by("cno").descending())
         );
 
