@@ -1,4 +1,5 @@
 # simParty
+## 21년도에도 참여하였지만 작년과는 예약하는 방법이 다양해지고 예약 수의 규모가 커져서 이대로 사용하기에는 무리라고 판단하여 다시 제작 예정
 ## Thymeleaf + Spring Boot + JPA + MariaDB + AWS Service(RDS, EC2, S3)
 ### Project Description
 > 20년도 핼러윈 때 의상 대여를 위해 일손을 도와주었습니다. <br>
